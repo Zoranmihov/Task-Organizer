@@ -1,0 +1,31 @@
+<section>
+  <div id="header-container">
+    <h2>Your projects:</h2>
+    <button (click)="openModel()">Create new project</button>
+  </div>
+
+  <div *ngFor="let project of this.data">
+  <div (click)="toProject(project.id)" class="project-container">
+    <h2>{{project.title}}</h2>
+    <p class="created-by">Created by: {{project.created_by}}</p>
+    <p class="description">{{project.description}}</p>
+    <p class="date">Created on: {{project.created_at | date:"d,M,Y, H:m"}}</p>
+  </div>
+</div>
+
+  <div #modal class="modal">
+    <div class="modal-content">
+      <h2>Create a new project</h2>
+      <form [formGroup]="projectForm">
+        <span #resError></span>
+        <input required formControlName="title" type="text" placeholder="Title" />
+        <textarea required formControlName="description" placeholder="Enter a description"></textarea>
+      </form>
+      <div>
+        <button (click)="createProject()" >Create</button> <button (click)="closeModel()">Cancel</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+

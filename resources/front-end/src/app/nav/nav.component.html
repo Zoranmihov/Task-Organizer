@@ -1,0 +1,24 @@
+<div *ngIf="user.isOnline$|async; else offline">
+  <nav class="online">
+    <h1 class="title">TaskOrganizer</h1>
+    <div class="container">
+      <a class="links" routerLink="#">Placeholder</a>
+      <a class="links" routerLink="#">Placeholder</a>
+    </div>
+  </nav>
+</div>
+
+<ng-template #offline>
+  <nav id="offline" #bar class="nav">
+    <h1 class="title">TaskOrganizer</h1>
+    <div class="container">
+      <a class="links" routerLink="login">Login</a>
+      <a class="links" routerLink="register">Sign up</a>
+    </div>
+  </nav>
+</ng-template>
+
+
+
+
+<!--  -->

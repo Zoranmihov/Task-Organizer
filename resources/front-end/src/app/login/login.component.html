@@ -1,0 +1,23 @@
+<section>
+  <form [formGroup]="loginForm" (submit)="login()">
+    <h1 #title>Login</h1>
+    <span #resError></span>
+    <input
+      formControlName="email"
+      placeholder="Email"
+      type="text"
+      required
+    />
+    <input
+      formControlName="password"
+      type="password"
+      placeholder="Password"
+      required
+    />
+    <button type="submit">Login</button>
+    <p class="signInText">
+      Don't have an account?
+      <a routerLink="/register">Click here to make one</a>.
+    </p>
+  </form>
+</section>
