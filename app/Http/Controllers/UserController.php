@@ -106,10 +106,11 @@ class UserController extends Controller
         ], 200)->withCookie(cookie('Bearer', '', 1 * 0.01));
     }
 
-    public function test()
-    {
-        return response()->json([
-            'message' => 'Works'
-        ], 200);
-    }
+    // public function test(Request $request)
+    // {
+    //     $user = User::where('email', Auth::user()->email)->first();
+    //     return response()->json([
+    //         'message' =>  now()->diffInDays($user->created_at)
+    //     ], 200);
+    // }
 }

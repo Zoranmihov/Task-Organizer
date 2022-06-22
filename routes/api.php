@@ -15,6 +15,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // User Routes
     Route::get('profile', [UserController::class, 'profile']);
     Route::post('verify', [UserController::class, 'verifyUser']);
+   // Route::get('test', [UserController::class, 'test']);
     Route::get('logout', [UserController::class, 'logout']);
 
     //Project routes
