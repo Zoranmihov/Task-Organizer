@@ -13,6 +13,7 @@ import { VerifyComponent } from './verify/verify.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { UserService } from './Services/user.service';
 import { ProjectComponent } from './project/project.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 export function basicLoader(user: UserService){
   return () => {
@@ -37,6 +38,7 @@ export function basicLoader(user: UserService){
     HttpClientModule,
     FormsModule,
     ReactiveFormsModule,
+    BrowserAnimationsModule,
   ],
   providers: [UserService, {provide: APP_INITIALIZER, useFactory: basicLoader, deps: [UserService], multi: true}],
   bootstrap: [AppComponent]

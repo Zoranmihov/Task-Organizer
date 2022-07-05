@@ -1,5 +1,39 @@
 <section>
-  <button (click)="getInfo()">
-    get Info
-  </button>
+  <div id="menu" *ngIf="project">
+    <div>
+      <h1>{{project.title}}</h1>
+    </div>
+    <div>
+      <button class="bl-button" (click)="logData()">Log data</button>
+      <button class="bl-button">Members</button>
+      <button class="bl-button">Add user</button>
+      <button class="bl-button" (click)="openModel(taskModal)">Create task</button>
+    </div>
+  </div>
+  <hr>
+  <div id="workspace" *ngIf="project">
+    <div class="task-container"><h2>To do</h2></div>
+    <div class="task-container"><h2>Doing</h2></div>
+    <div class="task-container"><h2>Done</h2></div>
+    <div id="chat" class="task-container">
+      <div class="input-container">
+        <input type="text" placeholder="Send a message" />
+        <button>Send</button>
+      </div>
+    </div>
+  </div>
 </section>
+
+<!--Create task model -->
+<div #taskModal class="modal">
+  <div class="modal-content">
+    <h2>Create a new task</h2>
+    <form [formGroup]="taskForm">
+      <span #resError></span>
+      <input formControlName="description" required  type="text" placeholder="Describe task" />
+    </form>
+    <div>
+      <button class="bl-button" (click)="createTask()" >Create</button> <button class="bl-button" (click)="closeModel(taskModal, taskForm)">Cancel</button>
+    </div>
+  </div>
+</div>

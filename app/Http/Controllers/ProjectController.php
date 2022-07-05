@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\ProjectEvent;
 use App\Models\Project;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -30,6 +32,7 @@ class ProjectController extends Controller
                     'email' => Auth::user()->email,
                 ]],
                 'created_by' => Auth::user()->email,
+                'tasks' => []
             ]);
             return response()->json([
                 'message' => "Success"
@@ -47,6 +50,46 @@ class ProjectController extends Controller
         } else {
             return response()->json([
                 'message' => "Nothing found"
+            ], 400);
+        }
+    }
+
+    public function getSingleProject(Request $request)
+    {
+        $project = Project::whereJsonContains('members', ['email' => Auth::user()->email])->where('id', $request->id)->first();
+        if (!$project) {
+            return response()->json([
+                'message' => 'Bad request'
+            ], 400);
+        } else {
+            event(new ProjectEvent($project));
+            return response()->json([
+                'message' => 'Connection established'
+            ], 200);
+        }
+    }
+
+    public function CreateTask(Request $request)
+    {
+        $project = Project::whereJsonContains('members', ['email' => Auth::user()->email])->where('id', $request->id)->first();
+        if (!$project) {
+            return response()->json([
+                'message' => 'Bad request'
+            ], 400);
+        } else {
+            $tasks = $project->tasks;
+            $tasks[] = [
+                "id" => time() . '-' . Auth::user()->name,
+                "description" => $request->task,
+                "stage" => "To do",
+                "created_by" => Auth::user()->name,
+                'created_at' => Carbon::now()
+            ];
+            $project->tasks = $tasks;
+            $project->save();
+            event(new ProjectEvent($project));
+            return response()->json([
+                'message' => 'Worked'
             ], 200);
         }
     }

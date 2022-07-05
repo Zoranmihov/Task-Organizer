@@ -1,5 +1,5 @@
 import { UserService } from './../Services/user.service';
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, ViewChild, ElementRef } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
@@ -9,7 +9,7 @@ import { Router } from '@angular/router';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.sass'],
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent {
   constructor(
     private http: HttpClient,
     private router: Router,
@@ -39,6 +39,4 @@ export class LoginComponent implements OnInit {
         }
       );
   };
-
-  ngOnInit(): void {}
 }

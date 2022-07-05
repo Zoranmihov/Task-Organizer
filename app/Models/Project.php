@@ -24,7 +24,8 @@ class Project extends Model
     ];
 
     protected $casts = [
-        "members" => 'array'
+        "members" => 'array',
+        'tasks' => 'array'
     ];
 
     protected $hidden = [
