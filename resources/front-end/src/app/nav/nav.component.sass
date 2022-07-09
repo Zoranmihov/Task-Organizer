@@ -20,13 +20,14 @@
   border-bottom: 1px solid black
 
 .title
+    margin: 0 !important
     font-size: 1.4rem
     font-family: 'Pacifico', sans-serif
     color: white
     text-shadow: 2px 0 0 #000, 0 -1px 0 #000, 0 1px 0 #000, -1px 0 0 #000
 
 .container
-    margin-top: 12px
+    margin-top: 5px
 
 .links
   padding: 5px
@@ -40,3 +41,9 @@
 .links:hover
   background-color: #694e2b
 
+@media screen and (max-width: 420px)
+  .title
+    font-size: 20px
+
+  .links
+    font-size: 16px

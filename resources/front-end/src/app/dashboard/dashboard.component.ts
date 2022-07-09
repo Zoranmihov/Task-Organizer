@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Component, OnInit, ViewChild, ElementRef  } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
 import { Router } from '@angular/router';
+import { DashboardLogic } from './dashboard-logic';
 
 @Component({
   selector: 'app-dashboard',
@@ -11,7 +12,7 @@ import { Router } from '@angular/router';
 })
 export class DashboardComponent implements OnInit {
 
-  constructor(private http: HttpClient, public router: Router, private projectService: ProjectService) {}
+  constructor(public dashboardLogic: DashboardLogic, private http: HttpClient, public router: Router, private projectService: ProjectService) {}
 
   @ViewChild('modal') modal!: ElementRef;
   @ViewChild('resError') resError!: ElementRef;
@@ -36,6 +37,7 @@ export class DashboardComponent implements OnInit {
       }
     );
   };
+
 
   toProject(id:number){
     this.router.navigate([`project/${id}`])

@@ -11,8 +11,29 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
+// Helper function
+function generateCode(){
+    $code = "";
+    $x = 0;
+    while ($x < 6) {
+        $code = $code . strval(mt_rand(0, 9));
+        $x++;
+    }
+    return $code;
+}
+
 class UserController extends Controller
 {
+     function generateCode(){
+        $code = "";
+        $x = 0;
+        while ($x < 6) {
+            $code = $code . strval(mt_rand(0, 9));
+            $x++;
+        }
+        return $code;
+    }
+
     public function register(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -26,12 +47,8 @@ class UserController extends Controller
             ], 400);
         } else {
 
-            $code = "";
-            $x = 0;
-            while ($x < 6) {
-                $code = $code . strval(mt_rand(0, 9));
-                $x++;
-            }
+            $code = generateCode();
+
             $data = [
                 'name' => $request->name,
                 'code' => $code
@@ -68,6 +85,22 @@ class UserController extends Controller
         }
     }
 
+    public function resendCode(Request $request){
+       $user = User::where('email', Auth::user()->email)->first();
+       $code = generateCode();
+       $user->v_code = $code;
+       $user->save();
+       $data = [
+        'name' => Auth::user()->name,
+        'code' => $code
+       ];
+       Mail::to(Auth::user()->email)->send(new CodeEmail($data));
+
+       return response()->json([
+        "message" => 'A new code was sent to your email'
+       ], 200);
+    }
+
     public function verifyUser(Request $request)
     {
         Log::debug($request);
@@ -92,6 +125,7 @@ class UserController extends Controller
             return response()->json([
                 'name' => Auth::user()->name,
                 'verified' => Auth::user()->verified,
+                'email' => Auth::user()->email,
                 'online' => true
             ], 200);
         }

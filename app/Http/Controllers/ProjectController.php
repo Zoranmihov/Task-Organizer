@@ -40,6 +40,24 @@ class ProjectController extends Controller
         }
     }
 
+    public function deleteProject(Request $request)
+    {
+        $project = Project::whereJsonContains('members', ['email' => Auth::user()->email])->where('id', $request->id)->first();
+        if (!$project) {
+            return response()->json([
+                'message' => 'Bad request'
+            ], 400);
+        } else {
+            if ($project->created_by != Auth::user()->email) {
+                return response()->json([
+                    'message' => 'Only the creator of the project can delete the project'
+                ], 400);
+            }
+            $project->delete();
+            return response($status = 200);
+        }
+    }
+
     public function getProjects(Request $request)
     {
         $projects = Project::whereJsonContains('members', ['email' => Auth::user()->email])->get();
@@ -69,7 +87,30 @@ class ProjectController extends Controller
         }
     }
 
-    public function CreateTask(Request $request)
+    public function leaveProject(Request $request)
+    {
+        $project = Project::whereJsonContains('members', ['email' => Auth::user()->email])->where('id', $request->id)->first();
+        if (!$project) {
+            return response()->json([
+                'message' => 'Bad request'
+            ], 400);
+        } else {
+            if ($project->created_by == Auth::user()->email) {
+                return response()->json([
+                    'message' => 'You cant leave projects you created'
+                ], 400);
+            }
+            $members = $project->members;
+            $found_key = array_search(Auth::user()->email, array_column($members, 'email'));
+            array_splice($members, $found_key, 1);
+            $project->members = $members;
+            $project->save();
+            event(new ProjectEvent($project));
+            return response($status = 200);
+        }
+    }
+
+    public function createTask(Request $request)
     {
         $project = Project::whereJsonContains('members', ['email' => Auth::user()->email])->where('id', $request->id)->first();
         if (!$project) {
@@ -91,6 +132,122 @@ class ProjectController extends Controller
             return response()->json([
                 'message' => 'Worked'
             ], 200);
+        }
+    }
+
+    public function updateTask(Request $request)
+    {
+        $project = Project::whereJsonContains('members', ['email' => Auth::user()->email])->where('id', $request->id)->first();
+        if (!$project) {
+            return response()->json([
+                'message' => 'Bad request'
+            ], 400);
+        } else {
+            $tasks = $project->tasks;
+            $found_key = array_search($request->task['id'], array_column($tasks, 'id'));
+            $tasks[$found_key] = $request->task;
+            $project->tasks = $tasks;
+            $project->save();
+            event(new ProjectEvent($project));
+            return response($status = 200);
+        }
+    }
+
+    public function deleteTask(Request $request)
+    {
+        $project = Project::whereJsonContains('members', ['email' => Auth::user()->email])->where('id', $request->projectId)->first();
+        if (!$project) {
+            return response()->json([
+                'message' => 'Bad request'
+            ], 400);
+        } else {
+            $tasks = $project->tasks;
+            $found_key = array_search($request->taskId, array_column($tasks, 'id'));
+            array_splice($tasks, $found_key, 1);
+            $project->tasks = $tasks;
+            $project->save();
+            event(new ProjectEvent($project));
+            return response($status = 200);
+        }
+    }
+
+    public function message(Request $request)
+    {
+        Log::debug($request);
+        $project = Project::whereJsonContains('members', ['email' => Auth::user()->email])->where('id', $request->id)->first();
+        if (!$project) {
+            return response()->json([
+                'message' => 'Bad request'
+            ], 400);
+        } else {
+            $messages = $project->chat;
+            $messages[] = [
+                'name' => Auth::user()->name,
+                'message' => $request->message,
+                'time' => Carbon::now()
+            ];
+            $project->chat = $messages;
+            $project->save();
+            event(new ProjectEvent($project));
+            return response($status = 200);
+        }
+    }
+
+    public function addMemeber(Request $request)
+    {
+        $project = Project::whereJsonContains('members', ['email' => Auth::user()->email])->where('id', $request->id)->first();
+        if (!$project) {
+            return response()->json([
+                'message' => 'Bad request'
+            ], 400);
+        } else {
+            $user = User::where('email', $request->email)->first();
+            if (!$user) {
+                return response()->json([
+                    'message' => 'User not found'
+                ], 400);
+            } else {
+                $members = $project->members;
+                if (in_array($request->email, $members)) {
+                    return response()->json([
+                        'message' => 'User is already a memember'
+                    ], 400);
+                } else {
+                    $members[] = [
+                        'name' => $user->name,
+                        'email' => $user->email
+                    ];
+                    $project->members = $members;
+                    $project->save();
+                    event(new ProjectEvent($project));
+                    return response()->json([
+                        'message' => 'User added'
+                    ], 200);
+                }
+            }
+        }
+    }
+
+    public function removeMember(Request $request)
+    {
+        $project = Project::whereJsonContains('members', ['email' => Auth::user()->email])->where('id', $request->id)->first();
+        if (!$project) {
+            return response()->json([
+                'message' => 'Bad request'
+            ], 400);
+        } else {
+            if ($project->created_by != Auth::user()->email) {
+                return response()->json([
+                    'message' => 'Only the creator of the project can remove members'
+                ], 400);
+            }
+            $members = $project->members;
+            $found_key = array_search($request->email, array_column($members, 'email'));
+            array_splice($members, $found_key, 1);
+            $project->members = $members;
+            $project->save();
+            event(new ProjectEvent($project));
+            return response($status = 200);
         }
     }
 }

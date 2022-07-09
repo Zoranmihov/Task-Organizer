@@ -1,7 +1,9 @@
 <section>
   <form [formGroup]="verifyForm">
-  <h1>Please enter your verification code</h1>
- <input type="text" formControlName="code">
- <button (click)="verify()">Verify</button>
-</form>
+    <h1>Please enter your verification code</h1>
+    <span #res></span>
+    <input type="text" formControlName="code" />
+    <button (click)="verify()">Verify</button>
+    <button (click)="resendCode()">Send new code</button>
+  </form>
 </section>

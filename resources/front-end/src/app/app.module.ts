@@ -2,6 +2,8 @@ import { APP_INITIALIZER, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { DragDropModule } from '@angular/cdk/drag-drop';
+import {MatIconModule} from '@angular/material/icon';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -30,7 +32,7 @@ export function basicLoader(user: UserService){
     NavComponent,
     VerifyComponent,
     DashboardComponent,
-    ProjectComponent
+    ProjectComponent,
   ],
   imports: [
     BrowserModule,
@@ -39,6 +41,8 @@ export function basicLoader(user: UserService){
     FormsModule,
     ReactiveFormsModule,
     BrowserAnimationsModule,
+    DragDropModule,
+    MatIconModule
   ],
   providers: [UserService, {provide: APP_INITIALIZER, useFactory: basicLoader, deps: [UserService], multi: true}],
   bootstrap: [AppComponent]

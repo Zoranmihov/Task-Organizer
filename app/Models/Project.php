@@ -21,11 +21,13 @@ class Project extends Model
         'members',
         'created_by',
         'tasks',
+        'chat',
     ];
 
     protected $casts = [
         "members" => 'array',
-        'tasks' => 'array'
+        'tasks' => 'array',
+        'chat' => 'array'
     ];
 
     protected $hidden = [

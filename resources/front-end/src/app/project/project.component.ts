@@ -1,9 +1,10 @@
+import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import Pusher from 'pusher-js';
-import { DragDropModule } from '@angular/cdk/drag-drop';
+import { ProjectLogic } from './project-logic';
 
 @Component({
   selector: 'app-project',
@@ -13,28 +14,36 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
 export class ProjectComponent implements OnInit {
   constructor(
     private http: HttpClient,
-    private activatedRoute: ActivatedRoute,
-    private router: Router
+    public activatedRoute: ActivatedRoute,
+    private router: Router,
+    public projectLogic: ProjectLogic
   ) {}
 
   @ViewChild('taskModal') taskModal!: ElementRef;
+  @ViewChild('membersModal') membersModal!: ElementRef;
+
   logData(){
-    console.log(this.project)
+    console.log(this.project.chat)
   }
 
+  eventData: any;
   project: any;
+  toDo: any[] = [];
+  doing: any[] =[];
+  done: any[] = [];
+
   taskForm = new FormGroup({
     description: new FormControl(''),
   });
 
-  openModel(modal: any) {
-    modal.style.display = 'block';
-  }
+   messageForm = new FormGroup({
+    message: new FormControl(''),
+  });
 
-  closeModel(modal: any, form:FormGroup) {
-    modal.style.display = 'none';
-    form.reset()
-  }
+  memberForm = new FormGroup({
+    email: new FormControl(''),
+  });
+
 
   createTask() {
     this.http.post(
@@ -47,6 +56,51 @@ export class ProjectComponent implements OnInit {
     ).subscribe(res => {
       console.log(res)
     });
+  }
+
+
+  sortTaks(tasks: any){
+    this.toDo = [];
+    this.doing = [];
+    this.done = [];
+    tasks.forEach((task: any) => {
+      switch(task.stage){
+        case 'To do':
+          this.toDo.push(task);
+          break
+          case 'Doing':
+            this.doing.push(task);
+            break
+          case 'Done':
+            this.done.push(task);
+            break
+      }
+    });
+  }
+
+  addUser() {
+    this.http.post(
+      '/api/add-user',
+      {
+        id: this.activatedRoute.snapshot.paramMap.get('id'),
+        email: this.memberForm.get("email")?.value,
+      },
+      { withCredentials: true }
+    ).subscribe(res => {
+      console.log(res)
+    });
+  }
+
+
+  sendMessage() {
+    this.http.post(
+      '/api/new-message',
+      {
+        id: this.activatedRoute.snapshot.paramMap.get('id'),
+        message: this.messageForm.get("message")?.value,
+      },
+      { withCredentials: true }
+    ).subscribe(res => console.log(res))
   }
 
   ngOnInit(): void {
@@ -69,6 +123,37 @@ export class ProjectComponent implements OnInit {
 
     channel.bind('ProjectEvent', (data: any) => {
       this.project = data.project;
+      this.sortTaks(data.project.tasks)
+
     });
+  }
+
+  drop(event: CdkDragDrop<any[]>) {
+    if (event.previousContainer === event.container) {
+      moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
+    } else {
+      let container = event.container.id
+      let task = event.item.data
+      switch(container){
+        case 'ToDoList':
+          task.stage = 'To do'
+          break
+        case 'DoingList':
+          task.stage = 'Doing'
+          break
+        case 'DoneList':
+          task.stage = 'Done'
+          break
+        default:
+          break
+      }
+      this.http.put('/api/update-task', {task, id:this.activatedRoute.snapshot.paramMap.get('id')}, { withCredentials: true }).subscribe(res => console.log(res), err => console.log(err))
+      transferArrayItem(
+        event.previousContainer.data,
+        event.container.data,
+        event.previousIndex,
+        event.currentIndex,
+      );
+    }
   }
 }

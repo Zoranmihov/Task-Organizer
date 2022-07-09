@@ -1,7 +1,5 @@
 <?php
 
-use App\Models\User;
-use App\Models\Project;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -22,6 +20,7 @@ return new class extends Migration
             $table->string('created_by');
             $table->text("members");
             $table->text("tasks")->nullable(true);
+            $table->text("chat")->nullable(true);
             $table->timestamps();
         });
     }
