@@ -1,11 +1,11 @@
 <section>
   <div id="header-container">
     <h2>Your projects:</h2>
-    <button (click)="openModel()">Create new project</button>
+    <button (click)="dashboardLogic.openModel(modal)">Create new project</button>
   </div>
 
   <div *ngFor="let project of this.data">
-  <div (click)="toProject(project.id)" class="project-container">
+  <div (click)="dashboardLogic.toProject(project.id)" class="project-container">
     <h2>{{project.title}}</h2>
     <p class="created-by">Created by: {{project.created_by}}</p>
     <p class="description">{{project.description}}</p>
@@ -22,7 +22,7 @@
         <textarea required formControlName="description" placeholder="Enter a description"></textarea>
       </form>
       <div>
-        <button (click)="createProject()" >Create</button> <button (click)="closeModel()">Cancel</button>
+        <button (click)="createProject()" >Create</button> <button (click)="dashboardLogic.closeModel(modal, projectForm)">Cancel</button>
       </div>
     </div>
   </div>

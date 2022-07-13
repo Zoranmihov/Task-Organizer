@@ -8,7 +8,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
 // Helper function
@@ -103,7 +102,6 @@ class UserController extends Controller
 
     public function verifyUser(Request $request)
     {
-        Log::debug($request);
         $user = User::where('email', Auth::user()->email)->where("v_code", $request->code)->first();
 
         if (!$user) {
@@ -126,7 +124,6 @@ class UserController extends Controller
                 'name' => Auth::user()->name,
                 'verified' => Auth::user()->verified,
                 'email' => Auth::user()->email,
-                'online' => true
             ], 200);
         }
     }
@@ -135,16 +132,6 @@ class UserController extends Controller
         Auth::user()->tokens->each(function ($token, $key) {
             $token->delete();
         });
-        return response()->json([
-            'message' => 'Hope to see you soon'
-        ], 200)->withCookie(cookie('Bearer', '', 1 * 0.01));
+        return response(200)->withCookie(cookie('Bearer', '', 1 * 0.01));
     }
-
-    // public function test(Request $request)
-    // {
-    //     $user = User::where('email', Auth::user()->email)->first();
-    //     return response()->json([
-    //         'message' =>  now()->diffInDays($user->created_at)
-    //     ], 200);
-    // }
 }

@@ -9,7 +9,7 @@ import { UserService } from '../Services/user.service';
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.sass'],
 })
-export class RegisterComponent implements OnInit {
+export class RegisterComponent {
   constructor(
     private http: HttpClient,
     private router: Router,
@@ -52,6 +52,4 @@ export class RegisterComponent implements OnInit {
       }
     );
   };
-
-  ngOnInit(): void {}
 }

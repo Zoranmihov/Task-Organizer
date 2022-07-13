@@ -1,4 +1,3 @@
-
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
@@ -11,40 +10,49 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { ProjectComponent } from './project/project.component';
 //Guards
 import { LoginGuard } from './guards/login.guard';
-//TODO Uncomment guards
+import { ReverseLoginGuard } from './guards/reverse-login.guard';
+import { VerifiedGuard } from './guards/verified.guard';
+
 
 const routes: Routes = [
   {
     path: '',
+    redirectTo: 'home',
+    pathMatch: 'full'
+  },
+  {
+    path: 'home',
     component: HomeComponent,
   },
   {
     path: 'register',
     component: RegisterComponent,
+    canActivate: [ReverseLoginGuard],
   },
   {
     path: 'login',
     component: LoginComponent,
+    canActivate: [ReverseLoginGuard],
   },
   {
     path: 'verify',
     component: VerifyComponent,
-    //canActivate: [LoginGuard]
+    canActivate: [LoginGuard],
   },
   {
     path: 'dashboard',
     component: DashboardComponent,
-   // canActivate: [LoginGuard]
+    canActivate: [LoginGuard, VerifiedGuard],
   },
   {
     path: 'project/:id',
     component: ProjectComponent,
-   // canActivate: [LoginGuard]
+    canActivate: [LoginGuard,VerifiedGuard],
   },
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule]
+  imports: [RouterModule.forRoot(routes, {onSameUrlNavigation: 'reload'})],
+  exports: [RouterModule],
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}

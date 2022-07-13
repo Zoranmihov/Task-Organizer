@@ -9,7 +9,6 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\Log;
 
 class ProjectController extends Controller
 {
@@ -42,6 +41,9 @@ class ProjectController extends Controller
 
     public function deleteProject(Request $request)
     {
+        $request->validate([
+            'id' => 'required'
+        ]);
         $project = Project::whereJsonContains('members', ['email' => Auth::user()->email])->where('id', $request->id)->first();
         if (!$project) {
             return response()->json([
@@ -68,12 +70,16 @@ class ProjectController extends Controller
         } else {
             return response()->json([
                 'message' => "Nothing found"
-            ], 400);
+            ], 404);
         }
     }
 
     public function getSingleProject(Request $request)
     {
+        $request->validate([
+            'id' => 'required'
+        ]);
+
         $project = Project::whereJsonContains('members', ['email' => Auth::user()->email])->where('id', $request->id)->first();
         if (!$project) {
             return response()->json([
@@ -89,6 +95,10 @@ class ProjectController extends Controller
 
     public function leaveProject(Request $request)
     {
+        $request->validate([
+            'id' => 'required'
+        ]);
+
         $project = Project::whereJsonContains('members', ['email' => Auth::user()->email])->where('id', $request->id)->first();
         if (!$project) {
             return response()->json([
@@ -112,6 +122,11 @@ class ProjectController extends Controller
 
     public function createTask(Request $request)
     {
+        $request->validate([
+            'id' => 'required',
+            'task' => 'required'
+        ]);
+
         $project = Project::whereJsonContains('members', ['email' => Auth::user()->email])->where('id', $request->id)->first();
         if (!$project) {
             return response()->json([
@@ -137,6 +152,11 @@ class ProjectController extends Controller
 
     public function updateTask(Request $request)
     {
+        $request->validate([
+            'id' => 'required',
+            'task' => 'required'
+        ]);
+
         $project = Project::whereJsonContains('members', ['email' => Auth::user()->email])->where('id', $request->id)->first();
         if (!$project) {
             return response()->json([
@@ -155,6 +175,10 @@ class ProjectController extends Controller
 
     public function deleteTask(Request $request)
     {
+        $request->validate([
+            'projectId' => 'required',
+            'taskId' => 'required'
+        ]);
         $project = Project::whereJsonContains('members', ['email' => Auth::user()->email])->where('id', $request->projectId)->first();
         if (!$project) {
             return response()->json([
@@ -173,7 +197,10 @@ class ProjectController extends Controller
 
     public function message(Request $request)
     {
-        Log::debug($request);
+        $request->validate([
+            'id' => 'required',
+            'message' => 'required'
+        ]);
         $project = Project::whereJsonContains('members', ['email' => Auth::user()->email])->where('id', $request->id)->first();
         if (!$project) {
             return response()->json([
@@ -195,6 +222,11 @@ class ProjectController extends Controller
 
     public function addMemeber(Request $request)
     {
+        $request->validate([
+            'id' => 'required',
+            'email' => 'required'
+        ]);
+
         $project = Project::whereJsonContains('members', ['email' => Auth::user()->email])->where('id', $request->id)->first();
         if (!$project) {
             return response()->json([
@@ -230,6 +262,10 @@ class ProjectController extends Controller
 
     public function removeMember(Request $request)
     {
+        $request->validate([
+            'id' => 'required',
+            'email' => 'required'
+        ]);
         $project = Project::whereJsonContains('members', ['email' => Auth::user()->email])->where('id', $request->id)->first();
         if (!$project) {
             return response()->json([

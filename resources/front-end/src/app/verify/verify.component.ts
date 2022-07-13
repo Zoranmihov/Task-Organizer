@@ -32,7 +32,7 @@ export class VerifyComponent implements OnInit {
           this.router.navigate(['dashboard']);
         },
         (err) => {
-          //TODO add error message and implement send a new code function
+          alert("Invalid code please try again")
         }
       );
   }

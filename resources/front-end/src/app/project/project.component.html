@@ -4,7 +4,15 @@
       <h1 id="title">{{ project.title }}</h1>
     </div>
     <div>
-      <button class="bl-button" (click)="projectLogic.deleteProject(activatedRoute.snapshot.paramMap.get('id'))">Delete</button>
+      <button
+        class="bl-button"
+        *ngIf="user.email === project.created_by"
+        (click)="
+          projectLogic.deleteProject(activatedRoute.snapshot.paramMap.get('id'))
+        "
+      >
+        Delete
+      </button>
       <button class="bl-button" (click)="projectLogic.openModel(membersModal)">
         Members
       </button>
@@ -23,7 +31,9 @@
         cdkDropList
         [cdkDropListData]="toDo"
         id="ToDoList"
-        (cdkDropListDropped)="drop($event)"
+        (cdkDropListDropped)="
+          projectLogic.drop($event, activatedRoute.snapshot.paramMap.get('id'))
+        "
       >
         <div
           class="single-task"
@@ -34,7 +44,16 @@
           <p>Created by {{ task.created_by }}</p>
           <p>{{ task.description }}</p>
           <p>Created at {{ task.created_at | date: "dd/MM/Y/H:mm" }}</p>
-          <mat-icon (click)="projectLogic.deleteTask(task.id, activatedRoute.snapshot.paramMap.get('id'))" style="color: red; cursor: pointer;">delete_forever</mat-icon>
+          <mat-icon
+            (click)="
+              projectLogic.deleteTask(
+                task.id,
+                activatedRoute.snapshot.paramMap.get('id')
+              )
+            "
+            style="color: red; cursor: pointer"
+            >delete_forever</mat-icon
+          >
         </div>
       </div>
     </div>
@@ -46,7 +65,9 @@
         cdkDropList
         [cdkDropListData]="doing"
         id="DoingList"
-        (cdkDropListDropped)="drop($event)"
+        (cdkDropListDropped)="
+          projectLogic.drop($event, activatedRoute.snapshot.paramMap.get('id'))
+        "
       >
         <div
           class="single-task"
@@ -57,7 +78,16 @@
           <p>Created by {{ task.created_by }}</p>
           <p>{{ task.description }}</p>
           <p>Created at {{ task.created_at | date: "dd/MM/Y/H:mm" }}</p>
-          <mat-icon (click)="projectLogic.deleteTask(task.id, activatedRoute.snapshot.paramMap.get('id'))" style="color: red; cursor: pointer;">delete_forever</mat-icon>
+          <mat-icon
+            (click)="
+              projectLogic.deleteTask(
+                task.id,
+                activatedRoute.snapshot.paramMap.get('id')
+              )
+            "
+            style="color: red; cursor: pointer"
+            >delete_forever</mat-icon
+          >
         </div>
       </div>
     </div>
@@ -69,7 +99,9 @@
         cdkDropList
         [cdkDropListData]="done"
         id="DoneList"
-        (cdkDropListDropped)="drop($event)"
+        (cdkDropListDropped)="
+          projectLogic.drop($event, activatedRoute.snapshot.paramMap.get('id'))
+        "
       >
         <div
           class="single-task"
@@ -81,7 +113,16 @@
             <p>Created by {{ task.created_by }}</p>
             <p>{{ task.description }}</p>
             <p>Created at {{ task.created_at | date: "dd/MM/Y/H:mm" }}</p>
-            <mat-icon (click)="projectLogic.deleteTask(task.id, activatedRoute.snapshot.paramMap.get('id'))" style="color: red; cursor: pointer;">delete_forever</mat-icon>
+            <mat-icon
+              (click)="
+                projectLogic.deleteTask(
+                  task.id,
+                  activatedRoute.snapshot.paramMap.get('id')
+                )
+              "
+              style="color: red; cursor: pointer"
+              >delete_forever</mat-icon
+            >
           </div>
         </div>
       </div>
@@ -89,14 +130,33 @@
     <div id="chat" class="task-container">
       <div class="input-container">
         <form [formGroup]="messageForm">
-        <input required formControlName="message" type="text" placeholder="Send a message" />
-      </form>
-        <button (click)="sendMessage()">Send</button>
+          <input
+            (keydown.enter)="
+              projectLogic.sendMessage(
+                this.activatedRoute.snapshot.paramMap.get('id'),
+                messageForm
+              )
+            "
+            formControlName="message"
+            type="text"
+            placeholder="Send a message"
+          />
+        </form>
+        <button
+          (click)="
+            projectLogic.sendMessage(
+              this.activatedRoute.snapshot.paramMap.get('id'),
+              messageForm
+            )
+          "
+        >
+          Send
+        </button>
       </div>
       <div class="message-container" *ngFor="let message of project.chat">
-        <p>{{message.name}}:</p>
-        <p class="message">{{message.message}}</p>
-        <p class="time">{{message.time| date: "dd/MM/H:mm"}}</p>
+        <p>{{ message.name }}:</p>
+        <p class="message">{{ message.message }}</p>
+        <p class="time">{{ message.time | date: "dd/MM/H:mm" }}</p>
       </div>
     </div>
   </div>
@@ -107,16 +167,32 @@
   <div class="modal-content">
     <h2>Create a new task</h2>
     <form [formGroup]="taskForm">
-      <span #resError></span>
       <input
+        (keydown.enter)="
+          projectLogic.createTask(
+            this.activatedRoute.snapshot.paramMap.get('id'),
+            taskForm,
+            taskModal
+          )
+        "
         formControlName="description"
-        required
         type="text"
         placeholder="Describe task"
       />
     </form>
     <div>
-      <button class="bl-button" (click)="createTask()">Create</button>
+      <button
+        class="bl-button"
+        (click)="
+          projectLogic.createTask(
+            this.activatedRoute.snapshot.paramMap.get('id'),
+            taskForm,
+            taskModal
+          )
+        "
+      >
+        Create
+      </button>
       <button
         class="bl-button"
         (click)="projectLogic.closeModel(taskModal, taskForm)"
@@ -133,30 +209,64 @@
     <h2>Add a new member</h2>
 
     <form [formGroup]="memberForm">
-      <span #resError></span>
+      <span #memberResError></span>
       <input
+        (keydown.enter)="
+          projectLogic.addUser(
+            activatedRoute.snapshot.paramMap.get('id'),
+            memberForm,
+            memberResError
+          )
+        "
         formControlName="email"
-        required
         type="text"
         placeholder="Enter email"
       />
     </form>
     <div>
-      <button class="bl-button" (click)="addUser()">Add</button>
       <button
-      class="bl-button"
-      (click)="projectLogic.closeModel(membersModal, memberForm)"
+        class="bl-button"
+        (click)="
+          projectLogic.addUser(
+            activatedRoute.snapshot.paramMap.get('id'),
+            memberForm,
+            memberResError
+          )
+        "
       >
-      Cancel
-    </button>
-    <button class="bl-button" (click)="projectLogic.leaveProject(activatedRoute.snapshot.paramMap.get('id'))">Leave</button>
+        Add
+      </button>
+      <button
+        class="bl-button"
+        (click)="projectLogic.closeModel(membersModal, memberForm)"
+      >
+        Cancel
+      </button>
+      <button
+        class="bl-button"
+        (click)="
+          projectLogic.leaveProject(activatedRoute.snapshot.paramMap.get('id'))
+        "
+      >
+        Leave
+      </button>
     </div>
     <h2>Members:</h2>
     <div class="members-container" *ngIf="project">
       <div class="members-card" *ngFor="let member of project.members">
         <p class="info">Name: {{ member.name }}</p>
         <p class="info">Email: {{ member.email }}</p>
-        <mat-icon (click)="projectLogic.removeUser(member.email, activatedRoute.snapshot.paramMap.get('id'))" style="color: red; cursor: pointer;">delete</mat-icon>
+        <mat-icon
+          *ngIf="user.email === project.created_by"
+          (click)="
+            projectLogic.removeUser(
+              member.email,
+              activatedRoute.snapshot.paramMap.get('id')
+            )
+          "
+          style="color: red; cursor: pointer"
+          >delete</mat-icon
+        >
       </div>
     </div>
   </div>

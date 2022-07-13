@@ -17,7 +17,7 @@ export class DashboardComponent implements OnInit {
   @ViewChild('modal') modal!: ElementRef;
   @ViewChild('resError') resError!: ElementRef;
 
-  projectForm = new FormGroup({
+  public projectForm = new FormGroup({
     title: new FormControl(''),
     description: new FormControl('')
   });
@@ -32,24 +32,16 @@ export class DashboardComponent implements OnInit {
         window.location.reload();
       },
       (err) => {
-        this.resError.nativeElement.innerHTML = err.error.message;
         this.projectForm.reset();
+        this.resError.nativeElement.innerHTML = err.error.message;
+      setTimeout(() => {
+        this.resError.nativeElement.innerHTML = ""
+      }, 2500);
       }
     );
   };
 
 
-  toProject(id:number){
-    this.router.navigate([`project/${id}`])
-  }
-
-  openModel(){
-    this.modal.nativeElement.style.display = 'block'
-  }
-
-  closeModel() {
-    this.modal.nativeElement.style.display = 'none';
-  }
 
   ngOnInit(): void {
     this.projectService.getProjects().subscribe((res: any) => {

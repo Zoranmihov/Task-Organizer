@@ -6,6 +6,7 @@ import { Observable, tap } from 'rxjs';
 @Injectable({
   providedIn: 'root'
 })
+// Todo reverse logic from this one for login and register guard
 export class LoginGuard implements CanActivate {
   constructor( private user:UserService, private router: Router){}
   canActivate(
