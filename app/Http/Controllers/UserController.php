@@ -109,6 +109,11 @@ class UserController extends Controller
                 'message' => 'Invalid or expired code'
             ], 401);
         } else {
+            if($user->verified = true) {
+                return response()->json([
+                    'message' => 'You are a verified user'
+                ], 401);
+            }
             $user->verified = true;
             $user->v_code = null;
             $user->save();
