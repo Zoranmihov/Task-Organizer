@@ -16,6 +16,7 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { UserService } from './Services/user.service';
 import { ProjectComponent } from './project/project.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { NotFoundComponent } from './not-found/not-found.component';
 
 export function basicLoader(user: UserService){
   return () => {
@@ -33,6 +34,7 @@ export function basicLoader(user: UserService){
     VerifyComponent,
     DashboardComponent,
     ProjectComponent,
+    NotFoundComponent,
   ],
   imports: [
     BrowserModule,

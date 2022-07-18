@@ -12,6 +12,7 @@ import { ProjectComponent } from './project/project.component';
 import { LoginGuard } from './guards/login.guard';
 import { ReverseLoginGuard } from './guards/reverse-login.guard';
 import { VerifiedGuard } from './guards/verified.guard';
+import { NotFoundComponent } from './not-found/not-found.component';
 
 
 const routes: Routes = [
@@ -49,6 +50,10 @@ const routes: Routes = [
     component: ProjectComponent,
     canActivate: [LoginGuard,VerifiedGuard],
   },
+  {
+    path: "**",
+    component: NotFoundComponent
+  }
 ];
 
 @NgModule({
