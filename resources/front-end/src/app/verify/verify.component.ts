@@ -29,7 +29,8 @@ export class VerifyComponent implements OnInit {
       })
       .subscribe(
         (res: any) => {
-          this.router.navigate(['dashboard']);
+          this.user.initUser();
+          setTimeout(() => this.router.navigate(['dashboard']),700)
         },
         (err) => {
           alert("Invalid code please try again")
