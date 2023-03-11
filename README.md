@@ -6,7 +6,4 @@ Task Organizer, a web application build with the intent of helping to break up c
 
 This project uses email verification. If you want to test the email verification portion you would need an inbox, https://temp-mail.org/en/ is an excellent service for that, or if you would like to use an already pre-made account. Email is kokopo2155@leupus.com with the password Tester97!.
 
-## Demo:
-
-https://zoran-task-organizer.herokuapp.com/
 
